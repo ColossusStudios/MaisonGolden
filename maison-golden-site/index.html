@@ -4,208 +4,287 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maison Golden | Refined Taste</title>
+    
+    <!-- TOOLKIT: Tailwind, Alpine.js, and Google Fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&family=Montserrat:wght@900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;900&family=Montserrat:wght@900&family=Playfair+Display:ital,wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #fafaf9; color: #1c1917; overflow-x: hidden; }
         .font-serif { font-family: 'Playfair Display', serif; }
         .font-montserrat { font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; }
         
-        /* SLIDER & CARDS */
-        .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: none; gap: 20px; padding: 20px 40px; }
-        .slider-container::-webkit-scrollbar { display: none; }
-        .slider-item { flex: 0 0 70%; scroll-snap-align: center; border-radius: 2.5rem; overflow: hidden; aspect-ratio: 16/9; position: relative; box-shadow: 0 20px 50px -10px rgba(0,0,0,0.15); }
-        .slider-item img { width: 100%; height: 100%; object-fit: cover; }
-        @media (min-width: 1024px) { .slider-item { flex: 0 0 40%; } }
-
-        .luxury-card { transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); min-height: 750px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; }
-        .img-container { position: absolute; top: -120px; left: 50%; transform: translateX(-50%); width: 100%; height: 400px; z-index: 20; pointer-events: none; }
-        .product-image { width: 100%; height: 100%; object-fit: contain; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(0 30px 30px rgba(0,0,0,0.3)); }
-        .luxury-card:hover .product-image { transform: scale(1.15) translateY(-20px); }
-        
-        /* IDLE FLOATING ANIMATION (Slower for luxury feel) */
-        .animate-float-hero { animation: floatHero 8s ease-in-out infinite; }
-        @keyframes floatHero { 0%, 100% { transform: translateY(0px) rotateY(0deg); } 50% { transform: translateY(-30px) rotateY(10deg); } }
-        
-        /* 3D SCENE SETUP */
+        /* HERO & CARDS ANIMATIONS */
         .stage-3d { perspective: 1500px; }
         .floor-shadow { width: 80%; height: 25px; background: radial-gradient(ellipse at center, rgba(0,0,0,0.15) 0%, transparent 70%); border-radius: 50%; position: absolute; bottom: 20px; left: 10%; z-index: 5; filter: blur(5px); }
+        .animate-float-hero { animation: floatHero 8s ease-in-out infinite; }
+        @keyframes floatHero { 0%, 100% { transform: translateY(0px) rotateY(0deg); } 50% { transform: translateY(-30px) rotateY(10deg); } }
 
-        .brand-icon { width: 48px; height: 48px; margin: 0 auto; stroke: #B39359; stroke-width: 1; fill: none; }
-        .btn-order-whatsapp { font-size: clamp(9px, 1.5vw, 11px) !important; white-space: nowrap; padding: 1.8rem 1rem !important; min-height: 70px; display: flex; align-items: center; justify-content: center; }
+        /* LUXURY PRODUCT CARDS */
+        .luxury-card { 
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1); 
+            min-height: 750px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            position: relative; 
+            border-radius: 6rem;
+        }
+
+        .img-container { 
+            position: absolute; top: -160px; left: 0; width: 100%; height: 550px; 
+            z-index: 40; pointer-events: none; display: flex; justify-content: center; align-items: center;
+        }
+
+        .product-image { 
+            width: 100%; height: 100%; object-fit: contain; 
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1); 
+            filter: drop-shadow(0 40px 40px rgba(0,0,0,0.4)); 
+            opacity: 1; transform: scale(1) translateY(0);
+        }
+
+        .hover-description {
+            position: absolute; inset: 0; padding: 4rem 2.5rem 10rem 2.5rem; 
+            display: flex; flex-direction: column; justify-content: center;
+            border-radius: 6rem; opacity: 0; transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 30; background: inherit; pointer-events: none;
+        }
+
+        .desc-item {
+            font-size: 0.9rem; color: rgba(255,255,255,0.85); margin-bottom: 0.8rem;
+            line-height: 1.5; border-left: 2px solid #B39359; padding-left: 1.25rem;
+            text-align: left;
+        }
+
+        .luxury-card:hover { transform: translateY(-15px); box-shadow: 0 50px 100px -20px rgba(0,0,0,0.3); }
+        .luxury-card:hover .product-image { opacity: 0.15; transform: scale(0.6) translateY(40px); filter: blur(12px); }
+        .luxury-card:hover .hover-description { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .luxury-card:hover .card-text-content { opacity: 0; transform: translateY(10px); }
+
+        .card-content { position: relative; z-index: 50; padding: 0 3rem 4rem 3rem; }
+        .card-text-content { transition: all 0.5s ease; }
+
+        /* EXPERIENCE SLIDER */
+        .experience-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.5s ease-in-out; }
+        .experience-slide.active { opacity: 1; z-index: 10; }
+        .experience-slide img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4) saturate(1.1); }
     </style>
 </head>
-<body x-data="maisonGolden()" x-init="startAutoSlider()">
+<body x-data="maisonGolden()">
 
+    <!-- HEADER -->
     <header class="bg-white/70 backdrop-blur-3xl py-6 px-8 md:px-16 flex justify-between items-center sticky top-0 z-50 border-b border-stone-100 h-24 md:h-28">
         <div class="h-16 md:h-20 flex items-center">
-            <img src="https://imgur.com/IQrapWp.png" alt="Maison Golden" class="h-full w-auto">
+            <img src="https://i.postimg.cc/0N0FD9ym/Maison-Golden-Logo-Background-Removed.png" alt="Maison Golden" class="h-full w-auto">
         </div>
         <div class="flex items-center gap-6">
             <div class="hidden lg:flex bg-stone-100 p-1 rounded-full border border-stone-200">
-                <button @click="lang = 'en'" :class="lang === 'en' ? 'bg-white shadow-sm text-stone-900' : 'text-stone-400'" class="px-5 py-2 rounded-full text-[9px] font-black uppercase transition-all">EN</button>
-                <button @click="lang = 'es'" :class="lang === 'es' ? 'bg-white shadow-sm text-stone-900' : 'text-stone-400'" class="px-5 py-2 rounded-full text-[9px] font-black uppercase transition-all">ES</button>
-                <button @click="lang = 'fr'" :class="lang === 'fr' ? 'bg-white shadow-sm text-stone-900' : 'text-stone-400'" class="px-5 py-2 rounded-full text-[9px] font-black uppercase transition-all">FR</button>
+                <template x-for="l in ['en', 'es', 'fr']">
+                    <button @click="lang = l" 
+                            :class="lang === l ? 'bg-white shadow-sm text-stone-900' : 'text-stone-400'" 
+                            class="px-5 py-2 rounded-full text-[9px] font-black uppercase transition-all" 
+                            x-text="l"></button>
+                </template>
             </div>
             <a href="#collection" class="bg-stone-900 text-white px-8 py-3 rounded-full text-[10px] font-black tracking-[0.2em] uppercase hover:bg-[#B39359] transition shadow-lg" x-text="t[lang].orderNow">ORDER</a>
         </div>
     </header>
 
+    <!-- HERO SECTION -->
     <section class="bg-white pt-20 pb-32 px-8 overflow-hidden">
-        <div class="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-16 items-center min-h-[700px]">
-            <div class="space-y-12 z-20">
+        <div class="max-w-[1400px] mx-auto grid lg:grid-cols-2 gap-16 items-center min-h-[750px]">
+            <div class="space-y-12">
                 <div class="flex items-center gap-4">
                     <div class="h-[1px] w-12 bg-[#B39359]"></div>
                     <span class="text-[#B39359] font-black tracking-[0.4em] uppercase text-[10px]">MAISON GOLDEN</span>
                 </div>
-                <h1 class="text-7xl md:text-[8rem] font-black text-stone-900 leading-[0.85] tracking-tighter">
+                <h1 class="text-7xl md:text-[8.5rem] font-black text-stone-900 leading-[0.8] tracking-tighter text-center lg:text-left">
                     <span class="block" x-text="t[lang].heroTitle">AUTHENTIC</span>
                     <span class="font-serif italic font-light text-[#B39359]" x-text="t[lang].heroSub">Flavors</span>
                 </h1>
-                <p class="text-stone-400 text-2xl font-light leading-relaxed max-w-lg" x-text="t[lang].description"></p>
-                <div class="pt-6">
-                    <a href="#collection" class="group relative inline-flex items-center gap-6 bg-stone-900 text-white px-14 py-7 rounded-full font-black text-xs tracking-[0.4em] uppercase hover:bg-[#B39359] transition-all shadow-2xl">
-                        <span x-text="t[lang].orderBtn">SHOP THE MAISON</span>
-                    </a>
-                </div>
+                <p class="text-stone-400 text-2xl font-light leading-relaxed max-w-lg mx-auto lg:mx-0 text-center lg:text-left" x-text="t[lang].description"></p>
             </div>
-
-            <div class="relative h-full min-h-[700px] w-full flex items-center justify-center bg-transparent stage-3d" x-data="{ active: 0 }" x-init="setInterval(() => { active = (active + 1) % 3 }, 7000)">
+            <div class="relative h-full min-h-[750px] w-full flex items-center justify-center stage-3d" x-data="{ active: 0 }" x-init="setInterval(() => { active = (active + 1) % 3 }, 7000)">
                 <div class="floor-shadow"></div>
-                
-                <div class="absolute inset-0 transition-all duration-1500 cubic-bezier(0.19, 1, 0.22, 1) flex items-center justify-center" 
-                     :class="active === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-75 rotate-x-[-90deg]'"
-                     style="backface-visibility: hidden;">
-                    <img src="https://imgur.com/BpilIUQ.png" class="max-h-[700px] w-auto animate-float-hero pointer-events-none drop-shadow-[0_45px_45px_rgba(0,0,0,0.15)]">
-                </div>
-                <div class="absolute inset-0 transition-all duration-1500 cubic-bezier(0.19, 1, 0.22, 1) flex items-center justify-center" 
-                     :class="active === 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-75 rotate-x-[-90deg]'"
-                     style="backface-visibility: hidden;">
-                    <img src="https://imgur.com/84dalGd.png" class="max-h-[700px] w-auto animate-float-hero pointer-events-none drop-shadow-[0_45px_45px_rgba(0,0,0,0.15)]">
-                </div>
-                <div class="absolute inset-0 transition-all duration-1500 cubic-bezier(0.19, 1, 0.22, 1) flex items-center justify-center" 
-                     :class="active === 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-75 rotate-x-[-90deg]'"
-                     style="backface-visibility: hidden;">
-                    <img src="https://imgur.com/UwXg81U.png" class="max-h-[700px] w-auto animate-float-hero pointer-events-none drop-shadow-[0_45px_45px_rgba(0,0,0,0.15)]">
-                </div>
+                <template x-for="(img, i) in heroImages">
+                    <div class="absolute inset-0 transition-all duration-1000 flex items-center justify-center" :class="active === i ? 'opacity-100 scale-100' : 'opacity-0 scale-75'">
+                        <img :src="img" class="max-h-[700px] w-auto animate-float-hero pointer-events-none drop-shadow-2xl">
+                    </div>
+                </template>
             </div>
         </div>
     </section>
 
-    <section class="py-20 bg-[#fafaf9]">
-        <div class="max-w-7xl mx-auto px-8 mb-8 text-center md:text-left">
-            <h2 class="text-[10px] font-black tracking-[0.5em] text-[#B39359] uppercase mb-4">The Experience</h2>
-            <p class="font-serif text-4xl text-stone-900 italic">Maison in Motion</p>
-        </div>
-        <div class="slider-container" id="autoSlider">
-            <div class="slider-item"><img src="https://imgur.com/BbUX9sc.png" alt="Moment 1"></div>
-            <div class="slider-item"><img src="https://imgur.com/9ks6nDH.png" alt="Moment 2"></div>
-            <div class="slider-item"><img src="https://imgur.com/ChgODhk.png" alt="Moment 3"></div>
-            <div class="slider-item"><img src="https://imgur.com/nKtM5ya.png" alt="Moment 4"></div>
+    <!-- EXPERIENCE SECTION (Background Slider) -->
+    <section class="relative h-screen min-h-[800px] bg-black overflow-hidden" x-data="{ current: 0 }" x-init="setInterval(() => { current = (current + 1) % expImages.length }, 5000)">
+        <template x-for="(bg, idx) in expImages">
+            <div class="experience-slide" :class="current === idx ? 'active' : ''">
+                <img :src="bg">
+            </div>
+        </template>
+        
+        <div class="relative z-20 h-full flex flex-col items-center justify-center text-center px-8">
+            <span class="text-[#B39359] font-black tracking-[0.5em] text-xs mb-8 uppercase" x-text="t[lang].expTag">THE GOLDEN EXPERIENCE</span>
+            <h2 class="text-white text-5xl md:text-8xl font-black mb-10 max-w-5xl leading-[1]" x-text="t[lang].expTitle"></h2>
+            <div class="w-24 h-[2px] bg-[#B39359]"></div>
         </div>
     </section>
 
-    <section class="py-40 px-8 bg-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-32">
-                <h2 class="text-[10px] font-black tracking-[0.5em] text-[#B39359] uppercase mb-6" x-text="t[lang].whyTitle">The Gold Standard</h2>
-                <p class="font-serif text-6xl text-stone-900 italic" x-text="t[lang].whySubtitle">Why Choose Maison Golden</p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-16 lg:gap-24">
-                <div class="text-center space-y-8 group">
-                    <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 9C4.5 9 3 11 3 13C3 15.21 4.79 17 7 17C8.5 17 9.5 16 11 14.5L12 13.5L13 14.5C14.5 16 15.5 17 17 17C19.21 17 21 15.21 21 13C21 11 19.5 9 19.5 9L12 2Z"/><path d="M12 13V22" stroke-dasharray="2 2"/></svg>
-                    <h3 class="font-serif text-2xl text-stone-900" x-text="t[lang].reason1">Pure Ingredients</h3>
-                    <p class="text-stone-400 font-light leading-relaxed px-4" x-text="t[lang].reason1Desc"></p>
-                </div>
-                <div class="text-center space-y-8 group border-x border-stone-100 px-4 lg:px-12">
-                    <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 3V21M12 3L7 8M12 3L17 8M5 21H19"/><circle cx="12" cy="12" r="3"/></svg>
-                    <h3 class="font-serif text-2xl text-stone-900" x-text="t[lang].reason2">Artisanal Process</h3>
-                    <p class="text-stone-400 font-light leading-relaxed px-4" x-text="t[lang].reason2Desc"></p>
-                </div>
-                <div class="text-center space-y-8 group">
-                    <svg class="brand-icon" viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/><path d="M12 17.77V22" stroke-dasharray="2 2"/></svg>
-                    <h3 class="font-serif text-2xl text-stone-900" x-text="t[lang].reason3">Refined Experience</h3>
-                    <p class="text-stone-400 font-light leading-relaxed px-4" x-text="t[lang].reason3Desc"></p>
-                </div>
-            </div>
-        </div>
-    </section>
-
+    <!-- COLLECTION SECTION -->
     <section id="collection" class="py-48 px-8 bg-[#fafaf9]">
         <div class="max-w-[1400px] mx-auto">
-            <div class="flex justify-center mb-32">
-                <div class="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-[#B39359]/30 bg-[#B39359]/5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#B39359] animate-pulse"></span>
-                    <span class="text-[10px] font-black tracking-[0.3em] text-[#B39359] uppercase" x-text="t[lang].featured">FEATURED PRODUCTS</span>
+            <div class="flex justify-center mb-44 text-center">
+                <div class="inline-flex items-center gap-3 px-8 py-3 rounded-full border border-[#B39359]/30 bg-[#B39359]/5">
+                    <span class="w-2 h-2 rounded-full bg-[#B39359] animate-pulse"></span>
+                    <span class="text-[11px] font-black tracking-[0.4em] text-[#B39359] uppercase" x-text="t[lang].featured"></span>
                 </div>
             </div>
+            
             <div class="grid lg:grid-cols-3 gap-24">
-                <div class="luxury-card bg-[#1a1a1a] rounded-[6rem] p-12 pb-16 shadow-3xl" x-data="{ size: '750ml', price: '1000' }">
-                    <div class="img-container"><img src="https://imgur.com/UX5DS7n.png" class="product-image"></div>
-                    <div class="space-y-10 text-center">
-                        <h4 class="font-montserrat text-5xl text-white">Golden Coffee</h4>
-                        <p class="text-[#B39359] font-black text-3xl tracking-widest" x-text="price + ' DOP'"></p>
-                        <div class="flex gap-4">
-                            <button @click="size = '750ml'; price = '1000'" :class="size === '750ml' ? 'bg-[#B39359]' : 'border-white/10 text-white/30'" class="flex-1 py-5 border-2 rounded-3xl text-[10px] font-black uppercase transition-all">750ML</button>
-                            <button @click="size = '350ml'; price = '500'" :class="size === '350ml' ? 'bg-[#B39359]' : 'border-white/10 text-white/30'" class="flex-1 py-5 border-2 rounded-3xl text-[10px] font-black uppercase transition-all">350ML</button>
+                <!-- COFFEE CARD -->
+                <div class="luxury-card bg-[#1a1a1a]">
+                    <div class="img-container"><img src="https://i.postimg.cc/sgXbSkhz/Coco-bottle-final.png" class="product-image"></div>
+                    <div class="hover-description">
+                        <h5 class="text-[#B39359] font-black uppercase text-xl mb-6 text-center" x-text="t[lang].coffee.title"></h5>
+                        <template x-for="item in t[lang].coffee.items">
+                            <div class="desc-item" x-text="item"></div>
+                        </template>
+                    </div>
+                    <div class="card-content text-center">
+                        <div class="card-text-content space-y-4">
+                            <h4 class="font-montserrat text-5xl text-white" x-text="t[lang].coffee.title"></h4>
+                            <p class="text-[#B39359] font-black text-3xl tracking-widest">1000 DOP</p>
                         </div>
-                        <button @click="orderWhatsApp('Golden Coffee', size, price + ' DOP')" class="btn-order-whatsapp w-full bg-white text-stone-900 rounded-[3rem] font-black tracking-[0.2em] uppercase hover:bg-[#B39359] hover:text-white transition" x-text="t[lang].whatsappOrder"></button>
+                        <button @click="orderWhatsApp(t[lang].coffee.title, '750ml', '1000 DOP')" class="bg-white text-stone-900 py-6 rounded-full font-black uppercase tracking-widest text-[11px] mt-8 hover:bg-[#B39359] hover:text-white transition w-full" x-text="t[lang].whatsappOrder"></button>
                     </div>
                 </div>
-                <div class="luxury-card bg-[#B39359] rounded-[6rem] p-12 pb-16 shadow-3xl">
-                    <div class="img-container"><img src="https://imgur.com/B2lSTvY.png" class="product-image"></div>
-                    <div class="space-y-10 text-center text-white">
-                        <h4 class="font-montserrat text-5xl">Golden Epis</h4>
-                        <p class="font-black text-3xl tracking-widest">300 DOP</p>
-                        <p class="text-white/90 italic px-4" x-text="t[lang].episTag"></p>
-                        <button @click="orderWhatsApp('Golden Epis', 'Standard', '300 DOP')" class="btn-order-whatsapp w-full bg-stone-900 text-white rounded-[3rem] font-black tracking-[0.2em] uppercase hover:bg-white hover:text-stone-900 transition" x-text="t[lang].whatsappOrder"></button>
+
+                <!-- EPIS CARD -->
+                <div class="luxury-card bg-[#B39359]">
+                    <div class="img-container"><img src="https://i.postimg.cc/6QfgnBpZ/Epis.png" class="product-image"></div>
+                    <div class="hover-description">
+                        <h5 class="text-stone-900 font-black uppercase text-xl mb-6 text-center" x-text="t[lang].epis.title"></h5>
+                        <template x-for="item in t[lang].epis.items">
+                            <div class="desc-item !text-stone-900/80 !border-stone-900" x-text="item"></div>
+                        </template>
+                    </div>
+                    <div class="card-content text-center text-white">
+                        <div class="card-text-content space-y-4">
+                            <h4 class="font-montserrat text-5xl" x-text="t[lang].epis.title"></h4>
+                            <p class="font-black text-3xl tracking-widest">300 DOP</p>
+                        </div>
+                        <button @click="orderWhatsApp(t[lang].epis.title, 'Standard', '300 DOP')" class="bg-stone-900 text-white py-6 rounded-full font-black uppercase tracking-widest text-[11px] mt-8 hover:bg-white hover:text-stone-900 transition w-full" x-text="t[lang].whatsappOrder"></button>
                     </div>
                 </div>
-                <div class="luxury-card bg-[#14261c] rounded-[6rem] p-12 pb-16 shadow-3xl" x-data="{ size: '750ml', price: '1000' }">
-                    <div class="img-container"><img src="https://imgur.com/JRjSPzv.png" class="product-image"></div>
-                    <div class="space-y-10 text-center">
-                        <h4 class="font-montserrat text-5xl text-white">Golden Coco</h4>
-                        <p class="text-[#B39359] font-black text-3xl tracking-widest" x-text="price + ' DOP'"></p>
-                        <div class="flex gap-4">
-                            <button @click="size = '750ml'; price = '1000'" :class="size === '750ml' ? 'bg-[#B39359]' : 'border-white/10 text-white/30'" class="flex-1 py-5 border-2 rounded-3xl text-[10px] font-black uppercase transition-all">750ML</button>
-                            <button @click="size = '350ml'; price = '500'" :class="size === '350ml' ? 'bg-[#B39359]' : 'border-white/10 text-white/30'" class="flex-1 py-5 border-2 rounded-3xl text-[10px] font-black uppercase transition-all">350ML</button>
+
+                <!-- COCO CARD -->
+                <div class="luxury-card bg-[#14261c]">
+                    <div class="img-container"><img src="https://i.postimg.cc/pdJ4zPLh/cocoa-bottle-final.png" class="product-image"></div>
+                    <div class="hover-description">
+                        <h5 class="text-[#B39359] font-black uppercase text-xl mb-6 text-center" x-text="t[lang].coco.title"></h5>
+                        <template x-for="item in t[lang].coco.items">
+                            <div class="desc-item" x-text="item"></div>
+                        </template>
+                    </div>
+                    <div class="card-content text-center">
+                        <div class="card-text-content space-y-4">
+                            <h4 class="font-montserrat text-5xl text-white" x-text="t[lang].coco.title"></h4>
+                            <p class="text-[#B39359] font-black text-3xl tracking-widest">1000 DOP</p>
                         </div>
-                        <button @click="orderWhatsApp('Golden Coco', size, price + ' DOP')" class="btn-order-whatsapp w-full bg-white text-stone-900 rounded-[3rem] font-black tracking-[0.2em] uppercase hover:bg-[#B39359] hover:text-white transition" x-text="t[lang].whatsappOrder"></button>
+                        <button @click="orderWhatsApp(t[lang].coco.title, '750ml', '1000 DOP')" class="bg-white text-stone-900 py-6 rounded-full font-black uppercase tracking-widest text-[11px] mt-8 hover:bg-[#B39359] hover:text-white transition w-full" x-text="t[lang].whatsappOrder"></button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="bg-[#1c1917] pt-32 pb-16 px-8 text-center">
-        <div class="max-w-7xl mx-auto">
-            <img src="https://imgur.com/IQrapWp.png" alt="Maison Golden" class="h-32 mx-auto mb-10">
-            <div class="grid md:grid-cols-3 gap-12 text-white/40 font-black tracking-[0.3em] uppercase text-[10px] mb-20">
-                <div>Santiago, Dominican Republic</div><div>Est. 2026</div><div>@MaisonGolden</div>
+    <!-- FOOTER SECTION -->
+    <footer class="bg-[#1c1917] pt-32 pb-16 text-center border-t border-white/5">
+        <div class="max-w-[1400px] mx-auto px-8">
+            <div class="flex flex-col items-center mb-12">
+                <a href="#" class="inline-block transition-transform duration-500 hover:scale-105">
+                    <img src="https://i.postimg.cc/0N0FD9ym/Maison-Golden-Logo-Background-Removed.png" 
+                         alt="Maison Golden" 
+                         class="h-32 mx-auto mb-4 drop-shadow-[0_0_15px_rgba(179,147,89,0.2)]">
+                </a>
+                <h3 class="font-serif italic text-4xl text-[#B39359]">Maison Golden</h3>
             </div>
-            <div class="border-t border-white/5 pt-12"><p class="text-white/20 text-[9px] font-light tracking-widest uppercase">© 2026 Maison Golden. All Rights Reserved.</p></div>
+            
+            <!-- SOCIAL MEDIA LINKS -->
+            <div class="flex justify-center items-center gap-10 mb-16">
+                <!-- Instagram -->
+                <a href="#" class="group flex flex-col items-center gap-2">
+                    <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#B39359] group-hover:bg-[#B39359]/5 transition-all">
+                        <svg class="w-5 h-5 text-white/40 group-hover:text-[#B39359]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849s-.011 3.584-.069 4.849c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.011-4.849-.07c-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849s.012-3.584.07-4.849c.149-3.225 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.337 2.617 6.78 6.979 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.351-.2 6.78-2.618 6.98-6.98.058-1.28.072-1.689.072-4.948s-.014-3.667-.072-4.947c-.2-4.331-2.617-6.78-6.979-6.98-1.281-.058-1.69-.072-4.949-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </div>
+                    <span class="text-[9px] font-black tracking-widest text-white/20 uppercase">Instagram</span>
+                </a>
+
+                <!-- TikTok -->
+                <a href="#" class="group flex flex-col items-center gap-2">
+                    <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#B39359] group-hover:bg-[#B39359]/5 transition-all">
+                        <svg class="w-5 h-5 text-white/40 group-hover:text-[#B39359]" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                    </div>
+                    <span class="text-[9px] font-black tracking-widest text-white/20 uppercase">TikTok</span>
+                </a>
+
+                <!-- Facebook -->
+                <a href="#" class="group flex flex-col items-center gap-2">
+                    <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#B39359] group-hover:bg-[#B39359]/5 transition-all">
+                        <svg class="w-5 h-5 text-white/40 group-hover:text-[#B39359]" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </div>
+                    <span class="text-[9px] font-black tracking-widest text-white/20 uppercase">Facebook</span>
+                </a>
+            </div>
+
+            <div class="space-y-6">
+                <p class="text-[#B39359] text-[10px] font-black tracking-[0.5em] uppercase">Refined Taste. Authentic Soul.</p>
+                <div class="w-12 h-[1px] bg-white/10 mx-auto"></div>
+                <p class="text-white/20 text-[9px] font-light tracking-widest uppercase">© 2026 Maison Golden. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- LOGIC SCRIPT -->
     <script>
         function maisonGolden() {
             return {
                 lang: 'en',
+                heroImages: [
+                    'https://i.postimg.cc/d0jprJVH/stack-coco.png',
+                    'https://i.postimg.cc/HxWKtFrw/Stack-coffee.png',
+                    'https://i.postimg.cc/3Rr6Zzk2/Stack-epis.png'
+                ],
+                expImages: [
+                    'https://i.postimg.cc/prJmthWW/a-black-couple-202604262150.jpg',
+                    'https://i.postimg.cc/j24Drwxt/a-black-couple-202604262151.jpg',
+                    'https://i.postimg.cc/9XdR9SGs/a-photo-realistic-202604262140.jpg',
+                    'https://i.postimg.cc/FzVYQdrF/remove-2K-202604262145.jpg'
+                ],
                 t: {
-                    en: { orderNow: 'ORDER', orderBtn: 'SHOP THE MAISON', heroTitle: 'AUTHENTIC', heroSub: 'Flavors', description: 'Natural products designed to bring balance and elegance into everyday life.', whatsappOrder: 'Order via WhatsApp', episTag: 'Authentic flavors, refined taste.', featured: 'Featured Products', whyTitle: 'The Gold Standard', whySubtitle: 'Why Choose Maison Golden', reason1: 'Pure Ingredients', reason1Desc: 'We source only the finest natural components, ensuring every drop is free from artificial additives.', reason2: 'Artisanal Process', reason2Desc: 'Handcrafted in small batches to preserve the integrity and richness of traditional flavors.', reason3: 'Refined Experience', reason3Desc: 'Designed for those who appreciate the finer things, bringing elegance to your kitchen and table.', wsMsg: "Hello Maison Golden! I'd like to order" },
-                    es: { orderNow: 'PEDIR', orderBtn: 'VER COLECCIÓN', heroTitle: ' SABORES', heroSub: 'Auténticos', description: 'Productos naturales diseñados para aportar equilibrio y elegancia al día a día.', whatsappOrder: 'Pedir por WhatsApp', episTag: 'Sabores auténticos, gusto refinado.', featured: 'Productos Destacados', whyTitle: 'El Estándar de Oro', whySubtitle: 'Por qué Elegir Maison Golden', reason1: 'Ingredientes Puros', reason1Desc: 'Obtenemos solo los mejores componentes naturales, asegurando que cada gota esté libre de aditivos artificiales.', reason2: 'Proceso Artesanal', reason2Desc: 'Elaborado a mano en lotes pequeños para preservar la integridad y riqueza de los sabores tradicionales.', reason3: 'Experiencia Refinada', reason3Desc: 'Diseñado para quienes aprecian lo mejor, aportando elegancia a su cocina y mesa.', wsMsg: "¡Hola Maison Golden! Me gustaría pedir" },
-                    fr: { orderNow: 'COMMANDER', orderBtn: 'DÉCOUVRIR', heroTitle: 'SAVEURS', heroSub: 'Authentiques', description: 'Produits naturels conçus pour apporter équilibre et élégance au quotidien.', whatsappOrder: 'Commander via WhatsApp', episTag: 'Saveurs authentiques, goût raffiné.', featured: 'Produits Vedettes', whyTitle: 'Le Standard d’Or', whySubtitle: 'Pourquoi Choisir Maison Golden', reason1: 'Ingrédients Purs', reason1Desc: 'Nous sélectionnons les meilleurs composants naturels, garantissant l’absence d’additifs artificiels.', reason2: 'Processus Artisanal', reason2Desc: 'Fabriqué à la main en petites quantités pour préserver l’intégrité des saveurs traditionnelles.', reason3: 'Experérience Raffinée', reason3Desc: 'Conçu pour les amateurs de finesse, apportant l’élégance à votre cuisine et votre table.', wsMsg: "Bonjour Maison Golden ! Je souhaite commander" }
-                },
-                startAutoSlider() {
-                    const slider = document.getElementById('autoSlider');
-                    let direction = 1;
-                    setInterval(() => {
-                        const maxScroll = slider.scrollWidth - slider.clientWidth;
-                        if (slider.scrollLeft >= maxScroll - 5) direction = -1;
-                        if (slider.scrollLeft <= 5) direction = 1;
-                        slider.scrollBy({ left: (slider.clientWidth * 0.4) * direction, behavior: 'smooth' });
-                    }, 4000);
+                    en: { 
+                        orderNow: 'ORDER', heroTitle: 'AUTHENTIC', heroSub: 'Flavors', description: 'Natural products designed to bring balance and elegance into everyday life.', whatsappOrder: 'Order via WhatsApp', featured: 'FEATURED PRODUCTS', wsMsg: "Hello! I'd like to order",
+                        expTag: 'THE GOLDEN EXPERIENCE', expTitle: 'CRAFTED WITH SOUL, SERVED WITH PASSION',
+                        coco: { title: "Golden Coco", items: ["Smooth coconut drink made from real blended coconut.", "Fresh coconut milk, cinnamon, star anise, lemon zest, and nutmeg.", "Lightly infused with sugarcane Haitian kleren."] },
+                        coffee: { title: "Golden Coffee", items: ["Bold and creamy coffee-based drink.", "Coffee, milk, condensed milk, cinnamon, star anise, and nutmeg.", "Finished with a hint of Haitian kleren for a balanced kick."] },
+                        epis: { title: "Golden Epis", items: ["All-natural Haitian seasoning blend.", "Garlic, leek, celery, turmeric, saffron, cilantro, and thyme.", "No preservatives. Perfect for marinating meat and fish."] }
+                    },
+                    es: { 
+                        orderNow: 'PEDIR', heroTitle: 'SABORES', heroSub: 'Auténticos', description: 'Productos naturales diseñados para aportar equilibrio y elegancia al día a día.', whatsappOrder: 'Pedir por WhatsApp', featured: 'PRODUCTOS DESTACADOS', wsMsg: "¡Hola! Me gustaría pedir",
+                        expTag: 'LA EXPERIENCIA GOLDEN', expTitle: 'CREADO CON ALMA, SERVIDO CON PASIÓN',
+                        coco: { title: "Golden Coco", items: ["Bebida de coco suave hecha de coco real licuado.", "Leche de coco fresca, canela, anís estrellado y nuez moscada.", "Ligeramente infusionado con kleren haitiano."] },
+                        coffee: { title: "Golden Coffee", items: ["Bebida cremosa a base de café artesanal.", "Café, leche, leche condensada, canela y anís estrellado.", "Toque de kleren haitiano para un equilibrio refinado."] },
+                        epis: { title: "Golden Epis", items: ["Sazón haitiano natural hecho con hierbas seleccionadas.", "Ajo, puerro, apio, cúrcuma, azafrán, cilantro y tomillo.", "Sin conservantes. Ideal para marinar carnes y pescados."] }
+                    },
+                    fr: { 
+                        orderNow: 'COMMANDER', heroTitle: 'SAVEURS', heroSub: 'Authentiques', description: 'Produits naturels conçus pour apporter équilibre et élégance au quotidien.', whatsappOrder: 'Commander via WhatsApp', featured: 'PRODUITS VEDETTES', wsMsg: "Bonjour ! Je souhaite commander",
+                        expTag: 'L’EXPÉRIENCE GOLDEN', expTitle: 'CONÇU AVEC ÂME, SERVI AVEC PASSION',
+                        coco: { title: "Golden Coco", items: ["Boisson onctueuse au coco faite à partir de vrai coco mixé.", "Lait de coco frais, cannelle, anis étoilé et muscade.", "Légèrement infusé au kleren haïtien."] },
+                        coffee: { title: "Golden Coffee", items: ["Boisson crémeuse au café riche et profond.", "Café, lait, lait condensé, cannelle et anis étoilé.", "Agrémenté d'une touche de kleren haïtien."] },
+                        epis: { title: "Golden Epis", items: ["Mélange d'épices haïtien naturel d'herbes fraîches.", "Ail, poireau, céleri, curcuma, safran, coriandre et thym.", "Sans conservateurs. Idéal pour mariner viandes et poissons."] }
+                    }
                 },
                 orderWhatsApp(product, size, price) { 
                     const intro = this.t[this.lang].wsMsg;
